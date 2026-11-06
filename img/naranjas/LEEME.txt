@@ -1,0 +1,7 @@
+Naranjas (1-3 key shots, 4-5 creación de personaje)
+
+Pon aquí, en .jpg y en minúsculas:
+- cover.jpg  -> portada 16:9 (1920x1080). Copia aquí tu mejor imagen.
+- 1.jpg, 2.jpg, 3.jpg, 4.jpg, 5.jpg
+
+Puedes borrar este LEEME.txt cuando quieras.

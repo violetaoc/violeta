@@ -1,0 +1,7 @@
+BUBBA (1 = creación de personajes)
+
+Pon aquí, en .jpg y en minúsculas:
+- cover.jpg  -> portada 16:9 (1920x1080). Copia aquí tu mejor imagen.
+- 1.jpg
+
+Puedes borrar este LEEME.txt cuando quieras.

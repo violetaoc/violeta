@@ -1,0 +1,7 @@
+NO LIFE (aún sin imágenes)
+
+Pon aquí, en .jpg y en minúsculas:
+- cover.jpg  -> portada 16:9 (1920x1080). Copia aquí tu mejor imagen.
+- (ninguna por ahora)
+
+Puedes borrar este LEEME.txt cuando quieras.
