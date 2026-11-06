@@ -241,9 +241,9 @@ const mk=(id,title,year,cat,g,accent,proc,role,desc,x={})=>({id,title,year,cat,g
 /* Nº de imágenes subidas en img/<id>/1.jpg, 2.jpg… (0 = se muestra el relleno) */
 const N={'the-school-of-life':14,bubba:11,'bizarrap-european-tour':1,'correr-hacia-un-lugar':8,naranjas:4};
 const W=[
- mk('2d-animation-reel','2D Animation Reel','2026','2D Animation','2d','red','r2','Your role','A selection of my best 2D animation work.',{reel:true,img:REEL_IMG,embed:'vimeo:1223761498'}),
+ mk('2d-animation-reel','2D Animation Reel','2026','2D Animation','2d','red','r2','Your role','A selection of my best 2D animation work.',{reel:true,embed:'vimeo:1223761498'}),
  mk('3d-generalist-reel','3D Generalist Reel','2026','3D Generalist','3d','grey','r3','Your role','A compilation reel of my most notable 3D work: modeling, texturing, lighting, environments, compositing and animation.',{reel:true,embed:'yt:RHklZks2ZiQ'}),
- mk('3d-animation','3D Animation','2026','3D Animation','3d','red','anim','Your role','A focused selection of 3D animation: characters, acting, movement, timing and body mechanics.',{reel:true,embed:'vimeo:1223757983'}),
+ mk('3d-animation','3D Animation Reel','2026','3D Animation','3d','red','anim','Your role','A focused selection of 3D animation: characters, acting, movement, timing and body mechanics.',{reel:true,embed:'vimeo:1223757983'}),
  mk('no-life','NO LIFE (WIP)','2026','3D Short Film','3d','grey','wip','Producer, lead animation, layout artist, texturing','My graduation 3D short film, in development. Production, lead animation, layout and texturing, shown through its visual universe, look development and process.',{wip:true}),
  mk('the-school-of-life','The School of Life','2022–2026','2D, Motion Graphics','2d','red','school','Visual development, concept art, storyboard artist, 2D animator','A selection of work from the last four years at the company where I work: illustration, design, 2D animation and motion graphics.'),
  mk('bubba','BUBBA','2021','Concept Art, Storyboard','2d','grey','bubba','Concept art, character design, story artist','Concept art and storyboards for the film BUBBA: visual development, designs and narrative process.',{embed:'yt:B1ogE-GdaUE',fembed:'yt:B1ogE-GdaUE'}),
@@ -335,19 +335,26 @@ async function go(){   /* cortinilla de cine: barrido + título de la página */
   if(my!==tk)return;render();
   await veil.animate([{clipPath:'inset(0)'},{clipPath:'inset(100% 0 0 0)'}],{duration:480,easing:'cubic-bezier(.76,0,.24,1)',fill:'forwards'}).finished;
 }
-function revealAbout(){   /* cortinilla: cada línea sube desde una máscara, escalonada */
+const letters=(el,d0,wrap)=>{   /* cada letra: retraso, duración, posición y tamaño iniciales distintos; termina en su sitio */
+  const t=el.textContent,ch=c=>`<i style="display:inline-block;font-style:normal">${c}</i>`;
+  el.innerHTML=wrap?t.split(' ').map(w=>`<span style="display:inline-block;white-space:nowrap">${[...w].map(ch).join('')}</span>`).join(' '):[...t].map(ch).join('');
+  let end=0;el.querySelectorAll('i').forEach((c,i)=>{const dl=d0+i*10+Math.random()*60,du=900+Math.random()*250;end=Math.max(end,dl+du);
+    c.animate([{transform:`translate(${((Math.random()-.5)*.08).toFixed(3)}em,-${(95+Math.random()*15).toFixed(0)}%) scale(${(.92+Math.random()*.08).toFixed(3)})`,opacity:0},{transform:'none',opacity:1}],{duration:du,delay:dl,easing:'cubic-bezier(.22,1,.36,1)',fill:'both'});});
+  return end;};
+function revealAbout(){   /* líneas con máscara, escalonadas; dentro, letra a letra */
   const el=document.querySelector('.bio');if(!el||reduce)return;const t=el.textContent;el.style.opacity=0;
   document.fonts.ready.then(()=>{if(!el.isConnected)return;
     el.innerHTML=t.split(' ').map(w=>`<span>${w}</span>`).join(' ');
     const L=[];let top=null;[...el.children].forEach(w=>{if(w.offsetTop!==top){L.push([]);top=w.offsetTop;}L[L.length-1].push(w.textContent);});
     el.innerHTML=L.map(l=>`<span style="display:block;overflow:hidden"><span style="display:block">${l.join(' ')}</span></span>`).join('');
-    el.style.opacity=1;
-    [...el.querySelectorAll('span>span')].forEach((s,i)=>s.animate([{transform:'translateY(105%)'},{transform:'none'}],{duration:1100,delay:600+i*120,easing:'cubic-bezier(.22,1,.36,1)',fill:'both'}));
-    setTimeout(()=>{if(el.isConnected)el.textContent=t;},600+L.length*120+1300);});
+    el.style.opacity=1;let end=0;
+    el.querySelectorAll('span>span').forEach((s,i)=>{end=Math.max(end,letters(s,600+i*140,1));});
+    setTimeout(()=>{if(el.isConnected)el.textContent=t;},end+150);});
 }
-function revealContact(){   /* mismo reveal que About: sube desde una máscara, escalonado */
-  if(reduce)return;const up=(el,d)=>el.animate([{transform:'translateY(105%)'},{transform:'none'}],{duration:1100,delay:d,easing:'cubic-bezier(.22,1,.36,1)',fill:'both'});
-  document.querySelectorAll('.mk>span').forEach(e=>up(e,600));document.querySelectorAll('.acts>*').forEach((e,i)=>up(e,780+i*120));
+function revealContact(){   /* el email letra a letra; los botones suben después */
+  if(reduce)return;const up=(el,d)=>el.animate([{transform:'translateY(-105%)'},{transform:'none'}],{duration:1100,delay:d,easing:'cubic-bezier(.22,1,.36,1)',fill:'both'});
+  document.querySelectorAll('.mk>span').forEach(e=>{const t=e.textContent,end=letters(e,600);setTimeout(()=>{if(e.isConnected)e.textContent=t;},end+150);});
+  document.querySelectorAll('.acts>*').forEach((e,i)=>up(e,1000+i*120));
 }
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#cp');if(!b)return;
   const done=()=>{b.textContent='Copied!';clearTimeout(b._t);b._t=setTimeout(()=>b.textContent='Copy email',1800);};
